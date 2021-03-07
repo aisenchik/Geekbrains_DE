@@ -16,6 +16,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Temporary view structure for view `summary_stats`
+--
+
+DROP TABLE IF EXISTS `summary_stats`;
+/*!50001 DROP VIEW IF EXISTS `summary_stats`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `summary_stats` AS SELECT 
+ 1 AS `mon`,
+ 1 AS `yea`,
+ 1 AS `orders`,
+ 1 AS `rides`,
+ 1 AS `MAU_pass`,
+ 1 AS `MAU_drivers`,
+ 1 AS `total_gmv`,
+ 1 AS `AVG_orders_per_pass`,
+ 1 AS `AVG_orders_per_driver`,
+ 1 AS `AVG_check`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `tbl_ban`
 --
 
@@ -225,6 +246,59 @@ CREATE TABLE `tbl_user` (
   CONSTRAINT `fk_tbl_user_tbl_carmodel1` FOREIGN KEY (`carmodel_id`) REFERENCES `tbl_carmodel` (`carmodel_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6001 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary view structure for view `users_cars`
+--
+
+DROP TABLE IF EXISTS `users_cars`;
+/*!50001 DROP VIEW IF EXISTS `users_cars`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `users_cars` AS SELECT 
+ 1 AS `user_id`,
+ 1 AS `first_name`,
+ 1 AS `last_name`,
+ 1 AS `carbrand_name`,
+ 1 AS `carmodel_name`,
+ 1 AS `class_name`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Final view structure for view `summary_stats`
+--
+
+/*!50001 DROP VIEW IF EXISTS `summary_stats`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `summary_stats` AS select `main_table`.`mon` AS `mon`,`main_table`.`yea` AS `yea`,`main_table`.`orders` AS `orders`,`main_table`.`rides` AS `rides`,`main_table`.`MAU_pass` AS `MAU_pass`,`main_table`.`MAU_drivers` AS `MAU_drivers`,`main_table`.`total_gmv` AS `total_gmv`,(`main_table`.`orders` / `main_table`.`MAU_pass`) AS `AVG_orders_per_pass`,(`main_table`.`orders` / `main_table`.`MAU_drivers`) AS `AVG_orders_per_driver`,(`main_table`.`total_gmv` / `main_table`.`orders`) AS `AVG_check` from (select month(`tbl_order`.`created_at`) AS `mon`,year(`tbl_order`.`created_at`) AS `yea`,count(`tbl_order`.`order_id`) AS `orders`,count(if((`tbl_order`.`status` = 'done'),`tbl_order`.`order_id`,NULL)) AS `rides`,count(distinct `tbl_order`.`pass_id`) AS `MAU_pass`,count(distinct `tbl_order`.`driver_id`) AS `MAU_drivers`,sum(if((`tbl_order`.`status` = 'done'),`tbl_order`.`price`,NULL)) AS `total_gmv` from `tbl_order` group by `yea`,`mon` order by `yea`,`mon`) `main_table` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `users_cars`
+--
+
+/*!50001 DROP VIEW IF EXISTS `users_cars`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `users_cars` AS select `tu`.`user_id` AS `user_id`,`tu`.`first_name` AS `first_name`,`tu`.`last_name` AS `last_name`,`t_bra`.`carbrand_name` AS `carbrand_name`,`t_mod`.`carmodel_name` AS `carmodel_name`,`t_nam`.`class_name` AS `class_name` from ((((`tbl_user` `tu` left join `tbl_carmodel` `t_mod` on((`t_mod`.`carmodel_id` = `tu`.`carmodel_id`))) left join `tbl_carbrand` `t_bra` on((`t_bra`.`carbrand_id` = `tu`.`carbrand_id`))) left join `tbl_car_class` `t_cla` on(((`t_cla`.`carmodel_id` = `t_mod`.`carmodel_id`) and (`t_cla`.`carbrand_id` = `tu`.`carbrand_id`)))) left join `tbl_class_name` `t_nam` on((`t_nam`.`carclass_id` = `t_cla`.`carclass_id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -235,4 +309,4 @@ CREATE TABLE `tbl_user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-07  1:37:11
+-- Dump completed on 2021-03-07 21:47:15
